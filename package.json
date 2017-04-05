@@ -1,0 +1,29 @@
+{
+  "name": "changeset-sparql",
+  "version": "1.0.0",
+  "description": " applies a changeset via SPARQL Update ",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape tests/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kwijibo/changeset-sparql.git"
+  },
+  "keywords": [
+    "sparql",
+    "changeset",
+    "updates"
+  ],
+  "author": "Keith Alexander",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/kwijibo/changeset-sparql/issues"
+  },
+  "homepage": "https://github.com/kwijibo/changeset-sparql#readme",
+  "dependencies": {
+    "data.either": "^1.5.0",
+    "data.task": "^3.1.1",
+    "sha1": "^1.1.1"
+  }
+}
