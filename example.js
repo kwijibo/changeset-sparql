@@ -3,9 +3,9 @@ const applyChangset = require('./index.js')
 const EX = 'http://example.info/'
 const changeset = {
     created: new Date().toISOString(),
-    create: [{s: EX+'123', p: EX+'count', o_value: 0, o_type:'literal', o_datatype: EX+'integer'}]
-   , remove: [{s: EX+'987', p: EX+'message',  o_value: "Hello", o_type:'literal', o_lang: 'en-gb'}]
-   , add: [{s: EX+'987', p: EX+'link',  o_value: EX+"678", o_type:'uri'}],
+//    create: [{s: EX+'123', p: EX+'count', o_value: 0, o_type:'literal', o_datatype: EX+'integer'}]
+//   , remove: [{s: EX+'987', p: EX+'message',  o_value: "Hello", o_type:'literal', o_lang: 'en-gb'}]
+    add: [{s: EX+'987', p: EX+'link',  o_value: EX+"678", o_type:'uri'}],
 }
 
 
