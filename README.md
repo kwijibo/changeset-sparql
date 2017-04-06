@@ -64,8 +64,8 @@ const changsetSparql = require('changeset-sparql')(query, update)
 ```
 changsetSparql(changeset, {
     error: console.error,
-    ok: console.log,
-    rejected: console.error
+    rejected: console.error,
+    ok: console.log
 })
 
 ```
