@@ -19,22 +19,32 @@ module.exports = function applyChangesetConfig(sparqlQueryNode, sparqlUpdateNode
         const changesetURI = 'urn:hash:sha1:'+id
         const arrayKeys = ['remove', 'add', 'create']
         arrayKeys.forEach(k => changeset[k]=changeset[k]||[])
+        const changegraph = 'app://graphs/changesets'
+        const previous = changeset.previous || []
+        const prev = previous.length? 
+            `; cs:previousChangeSet ${changeset.previous.map(s => `<${s}>`).join(', ')}` : ``
         const update = `
 PREFIX dc: <http://purl.org/dc/terms/>
+PREFIX cs: <http://purl.org/vocab/changeset/schema#>
 DELETE {
     ${changeset.remove.map(quadToSparql).join('\n')}        
 } INSERT {
     ${changeset.add.map(quadToSparql).join('\n')}
-    ${changeset.create.map(quadToSparql).join('\n')}
-    <${changesetURI}> dc:dateAccepted ?now .
+    GRAPH <${changegraph}> { 
+        <${changesetURI}> dc:dateAccepted ?now
+            ; cs:subjectOfChange ${subjects.map(s => `<${s}>`).join(', ')} 
+            ${prev}
+        . 
+    }
 } WHERE {
     BIND(NOW() AS ?now)
     ${changeset.remove.map(quadToSparql).join('\n')}
-    ${changeset.create.map(propertyNotExists).join('\n')}
-    FILTER NOT EXISTS { <${changesetURI}> dc:dateAccepted ?date .}
+    FILTER NOT EXISTS { 
+        GRAPH <${changegraph}> { <${changesetURI}> dc:dateAccepted ?date . }
+    }
 }
         `
-        const confirmationQuery = `ASK WHERE {<${changesetURI}> ?p ?o }`
+        const confirmationQuery = `ASK WHERE { GRAPH <${changegraph}> { <${changesetURI}> ?p ?o } }`
         
         const op = pipe(
             sparqlUpdate,

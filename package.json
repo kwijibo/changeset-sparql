@@ -23,5 +23,8 @@
   "homepage": "https://github.com/kwijibo/changeset-sparql#readme",
   "dependencies": {
     "sha1": "^1.1.1"
+  },
+  "devDependencies": {
+    "request": "^2.81.0"
   }
 }
