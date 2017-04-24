@@ -42,13 +42,13 @@ test('creating new resources', function (t) {
     const changeset = createResources(initial)
     httpUpdate('DROP ALL;', function resourceCreation(err, data){
         if(err) return console.error(err)
-        changesetSuccess(changeset, uri=>{
+        changesetSuccess(t, changeset, uri=>{
             t.pass("resources created")
             const editChangeset = editResources([uri], initial, afterEdit)
-            changesetSuccess(editChangeset, editUri => {
+            changesetSuccess(t, editChangeset, editUri => {
                 t.pass("resources edited")
                 const deleteChangeset = removeResources([editUri], afterEdit)
-                changesetSuccess(deleteChangeset, delUri=> {
+                changesetSuccess(t, deleteChangeset, delUri=> {
                     t.pass("resource deleted")
                 })
             })
@@ -56,18 +56,37 @@ test('creating new resources', function (t) {
     })
 })
 
-function changesetSuccess(changeset, okCallback){
+test('conflicting edits', function(t){
+     t.plan(1)
+    const initial = [{id: "a", name: "A", foo: "bar"}, {id: "b", name: "B"}]
+    const afterEditA = [{id: "a", name: "X", foo: "baz"}, {id: "b", name: "Y"}] 
+    const afterEditB = [{id: "a", name: "Z", foo: "bazza"}, {id: "b", name: "W"}] 
+    const changeset = createResources(initial)
+    httpUpdate('DROP ALL;', function resourceCreation(err, data){
+        if(err) return console.error(err)
+        changesetSuccess(t, changeset, createUri=>{
+            const editChangeset = editResources([createUri], initial, afterEditA)
+            changesetSuccess(t, editChangeset, editUri => {
+            const editChangesetB = editResources([createUri], initial, afterEditB)
+                changesetFail(t, editChangesetB, x => t.pass("changeset should be rejected because "+createUri+" is not the latest changeset"))
+            })
+        })
+    })
+
+})
+
+function changesetSuccess(t, changeset, okCallback){
     applyChangeset(changeset, {
             error: x => t.fail(x),
             ok: okCallback,
-            rejected: x => t.fail("changeset rejected")
+            rejected: x => t.fail("changeset rejected "+ x)
     })
 }
 
-function changesetFail(changeset,rejectedkCallback){
+function changesetFail(t, changeset,rejectedCallback){
     applyChangeset(changeset, {
             error: x => t.fail(x),
-            ok: t.fail("changeset should have been rejected"),
+            ok: x => t.fail("changeset should have been rejected "+ x),
             rejected: rejectedCallback
     })
 }
