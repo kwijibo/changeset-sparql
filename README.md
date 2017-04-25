@@ -13,8 +13,6 @@ First we make a changeset:
 ```
 const EX = 'http://example.info/'
 const changeset = {
-    // date 
-     created: new Date().toISOString(),
     // an array of triples/quads to add
      add: [{s: EX+'123', p: EX+'count', o_value: 0, o_type:'literal', o_datatype: EX+'integer', g: EX+'graphs/graph-name'}]
     // triples/quads to remove (changeset will fail if they don't exist)
@@ -84,7 +82,6 @@ changsetSparql(changeset, {
 - *add*: optional, must be an Array of quads to be added to the dataset
 - *remove*: optional, must be an Array of quads to be removed from the dataset
 - *previous*: optional, must be an Array of URIs of latest changesets of each _subject_ 
-- *created*: optional, must be a full date time (including date, time, seconds, timezone)
 
 #### Triple/Quad Specification
 
