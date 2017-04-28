@@ -28,8 +28,10 @@ module.exports = function applyChangesetWith(sparqlQueryNode, sparqlUpdateNode){
         const update = `
 PREFIX dc: <http://purl.org/dc/terms/>
 PREFIX cs: <http://purl.org/vocab/changeset/schema#>
+PREFIX csex: <app://vocab/changeset-extension/schema#>
 DELETE {
     ${changeset.remove.map(quadToSparql).join('\n')}        
+    ${subjects.map(s => `<${s}> csex:latestChangeSet ?latestChangeSet .`).join('\n')}
 } INSERT {
     ${changeset.add.map(quadToSparql).join('\n')}
     GRAPH <${changegraph}> { 
@@ -37,10 +39,15 @@ DELETE {
             ; cs:subjectOfChange ${subjects.map(s => `<${s}>`).join(', ')} 
             ${prev}
         . 
+        ${subjects.map(s => `<${s}> csex:latestChangeSet <${changesetURI}> .`).join('\n')}
     }
 } WHERE {
     BIND(NOW() AS ?now)
+    
+    ${subjects.map(s => `OPTIONAL { <${s}> csex:latestChangeSet ?latestChangeSet . }`).join('\n')}
+    
     ${changeset.remove.map(quadToSparql).join('\n')}
+    
     FILTER NOT EXISTS { 
         GRAPH <${changegraph}> { <${changesetURI}> dc:dateAccepted ?date . }
     }
