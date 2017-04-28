@@ -13,14 +13,13 @@ First we make a changeset:
 ```
 const EX = 'http://example.info/'
 const changeset = {
-    // date 
-     created: new Date().toISOString(),
     // an array of triples/quads to add
      add: [{s: EX+'123', p: EX+'count', o_value: 0, o_type:'literal', o_datatype: EX+'integer', g: EX+'graphs/graph-name'}]
     // triples/quads to remove (changeset will fail if they don't exist)
    , remove: [{s: EX+'987', p: EX+'message',  o_value: "Hello", o_type:'literal', o_lang: 'en-gb'}]
-    // triples/quads to create (changeset will fail if s & p already exist)
-   , create: [{s: EX+'987', p: EX+'link',  o_value: EX+"678", o_type:'uri'}],
+    // the URIs of the latest changesets for each subject we want to change
+   , previous: ["urn:hash:sha1:jkhjkhkj2kjh3", "urn:hash:sha1:mnwejkljh7898c"],
+
 }
 ```
 
@@ -80,14 +79,13 @@ changsetSparql(changeset, {
  
 ### Changeset Object Specification
 
-- *created*: required, must be a full date time (including date, time, seconds, timezone)
 - *add*: optional, must be an Array of quads to be added to the dataset
 - *remove*: optional, must be an Array of quads to be removed from the dataset
-- *create*: optional, must be an Array of quads to be added to the dataset if the `graph` `subject` `predicate` combination does not already exist
+- *previous*: optional, must be an Array of URIs of latest changesets of each _subject_ 
 
 #### Triple/Quad Specification
 
-(format of the objects in the `add` `remove` `create` Arrays)
+(format of the objects in the `add` and `remove` Arrays)
 
 - *s*: required, URI (subject)
 - *p*: required, URI (predicate/property)
