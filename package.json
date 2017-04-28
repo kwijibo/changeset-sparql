@@ -1,10 +1,10 @@
 {
   "name": "changeset-sparql",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": " applies a changeset via SPARQL Update ",
   "main": "index.js",
   "scripts": {
-    "test": "tape tests/**/*.js"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,8 @@
   "homepage": "https://github.com/kwijibo/changeset-sparql#readme",
   "dependencies": {
     "sha1": "^1.1.1"
+  },
+  "devDependencies": {
+    "request": "^2.81.0"
   }
 }
