@@ -4,7 +4,7 @@
   "description": " applies a changeset via SPARQL Update ",
   "main": "index.js",
   "scripts": {
-    "test": "tape tests/**/*.js"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
