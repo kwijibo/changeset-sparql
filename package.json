@@ -1,6 +1,6 @@
 {
   "name": "changeset-sparql",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": " applies a changeset via SPARQL Update ",
   "main": "index.js",
   "scripts": {

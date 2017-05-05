@@ -31,7 +31,9 @@ PREFIX cs: <http://purl.org/vocab/changeset/schema#>
 PREFIX csex: <app://vocab/changeset-extension/schema#>
 DELETE {
     ${changeset.remove.map(quadToSparql).join('\n')}        
-    ${subjects.map(s => `<${s}> csex:latestChangeSet ?latestChangeSet .`).join('\n')}
+    GRAPH <${changegraph}> { 
+        ${subjects.map(s => `<${s}> csex:latestChangeSet ?latestChangeSet .`).join('\n')} 
+    }
 } INSERT {
     ${changeset.add.map(quadToSparql).join('\n')}
     GRAPH <${changegraph}> { 
@@ -44,16 +46,16 @@ DELETE {
 } WHERE {
     BIND(NOW() AS ?now)
     
-    ${subjects.map(s => `OPTIONAL { <${s}> csex:latestChangeSet ?latestChangeSet . }`).join('\n')}
+    ${subjects.map(s => `GRAPH <${changegraph}> {
+        OPTIONAL { <${s}> csex:latestChangeSet ?latestChangeSet . }
+    }`).join('\n')}
     
     ${changeset.remove.map(quadToSparql).join('\n')}
     
     FILTER NOT EXISTS { 
         GRAPH <${changegraph}> { <${changesetURI}> dc:dateAccepted ?date . }
     }
-    GRAPH <${changegraph}> {
-        ${checkCandidateIsLatest(previous, subjects)}
-    }
+    ${checkCandidateIsLatest(changegraph, previous, subjects)}
 }
         `
         const confirmationQuery = `ASK WHERE { GRAPH <${changegraph}> { <${changesetURI}> ?p ?o } }`
@@ -84,8 +86,8 @@ DELETE {
 //though some of the other insertion logic might be trickier
 //- we still need the whole batch to fail if one fails
 
-function checkCandidateIsLatest(previous, subjects){
-    return subjects.map((s, i) => `
+function checkCandidateIsLatest(changegraph, previous, subjects){
+    return previous.length? `GRAPH <${changegraph}> {` + subjects.map((s, i) => `
     { 
        FILTER NOT EXISTS { ?latest_${i} cs:subjectOfChange <${s}> . }
     }
@@ -97,7 +99,7 @@ function checkCandidateIsLatest(previous, subjects){
         }
         FILTER(?latest_${i} IN (${previous.map(p=>`<${p}>`).join(', ')}))
     }
-    `).join('\n')
+    `).join('\n')+` }` : ''
 }
 
 function unique(arr){
