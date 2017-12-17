@@ -1,6 +1,6 @@
 # changeset-sparql
 Applies a changeset via SPARQL Update
-
+/
 ```
 npm install changeset-sparql
 ```
@@ -70,7 +70,7 @@ changsetSparql(changeset, {
 ```
 - `error` Gets called with an error if there are problems running the updates or queries (ie: if `query` or `update` call the callback with an error). You may want to retry if this happens.
 - `rejected` gets called with an error message if the changeset was rejected. This happens if:
-    - the subject and predicate of a `create` triple/quad already exists in the dataset
+    - the `previous` changeset URI given wasn't the latest changeset for that resource
     - any `delete` triples/quads don't exist in the dataset.
     You should not retry, but you may want to alter the changeset and resubmit.
 - `ok` Gets called with the URI of the changeset if:
